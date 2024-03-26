@@ -31,7 +31,8 @@ enum class cuOSDClockFormat : int {
     None          = 0,
     YYMMDD_HHMMSS = 1,
     YYMMDD        = 2,
-    HHMMSS        = 3
+    HHMMSS        = 3,
+    YYMMDD_HHMMSS_MMM = 4
 };
 
 enum class cuOSDImageFormat : int {

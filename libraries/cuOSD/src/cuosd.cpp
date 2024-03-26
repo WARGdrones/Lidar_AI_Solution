@@ -269,6 +269,10 @@ void cuosd_draw_clock(
         oss << std::put_time(&now_tm, "%Y-%m-%d");
     } else if (clock_format == cuOSDClockFormat::YYMMDD_HHMMSS) {
         oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+    } else if (clock_format == cuOSDClockFormat::YYMMDD_HHMMSS_MMM) {
+        oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_now.time_since_epoch()) % 1000;
+        oss << "." << std::setfill('0') << std::setw(3) << ms.count();
     }
     auto utf8_str = oss.str();
     cuosd_draw_text(_context, utf8_str.c_str(), font_size, font, x, y, border_color, bg_color);
