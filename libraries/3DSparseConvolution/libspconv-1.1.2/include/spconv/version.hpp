@@ -20,37 +20,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+ 
+#ifndef __SPCONV_VERSION_HPP__
+#define __SPCONV_VERSION_HPP__
 
-#ifndef __LIDAR_SCN_HPP__
-#define __LIDAR_SCN_HPP__
+#define NVSPCONV_MAJOR 1
+#define NVSPCONV_MINOR 1
+#define NVSPCONV_REL 2
+#define NVSPCONV_STR(v) #v
+#define NVSPCONV_VERSION_COMBIN(major, minor, rel) \
+  (NVSPCONV_STR(major) "." NVSPCONV_STR(minor) "." NVSPCONV_STR(rel))
+#define NVSPCONV_VERSION NVSPCONV_VERSION_COMBIN(NVSPCONV_MAJOR, NVSPCONV_MINOR, NVSPCONV_REL)
 
-#include <vector>
-#include <string>
-#include "lidar-voxelization.hpp"
-
-namespace bevfusion {
-namespace lidar {
-
-// use model accuracy during SCN model inference.
-enum class Precision : int { NonePrecision = 0, Float16 = 1, Int8 = 2 };
-
-struct SCNParameter {
-  VoxelizationParameter voxelization;
-  std::string model;
-  CoordinateOrder order = CoordinateOrder::XYZ;
-  Precision precision = Precision::Float16;
-};
-
-class SCN {
- public:
-  // points and voxels must be of half-float device pointer
-  virtual const nvtype::half* forward(const nvtype::half* points, unsigned int num_points, void* stream = nullptr) = 0;
-  virtual std::vector<int64_t> shape() = 0;
-};
-
-std::shared_ptr<SCN> create_scn(const SCNParameter& param);
-
-};  // namespace lidar
-};  // namespace bevfusion
-
-#endif  // __LIDAR_SCN_HPP__
+#endif  // #ifndef __SPCONV_VERSION_HPP__

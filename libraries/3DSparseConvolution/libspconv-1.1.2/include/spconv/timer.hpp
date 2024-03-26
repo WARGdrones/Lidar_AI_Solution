@@ -20,37 +20,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+ 
+#ifndef __SPCONV_TIMER_HPP__
+#define __SPCONV_TIMER_HPP__
 
-#ifndef __LIDAR_SCN_HPP__
-#define __LIDAR_SCN_HPP__
+#include <cuda_runtime.h>
 
-#include <vector>
-#include <string>
-#include "lidar-voxelization.hpp"
+#include "check.hpp"
 
-namespace bevfusion {
-namespace lidar {
+namespace spconv {
 
-// use model accuracy during SCN model inference.
-enum class Precision : int { NonePrecision = 0, Float16 = 1, Int8 = 2 };
-
-struct SCNParameter {
-  VoxelizationParameter voxelization;
-  std::string model;
-  CoordinateOrder order = CoordinateOrder::XYZ;
-  Precision precision = Precision::Float16;
-};
-
-class SCN {
+class EventTimer {
  public:
-  // points and voxels must be of half-float device pointer
-  virtual const nvtype::half* forward(const nvtype::half* points, unsigned int num_points, void* stream = nullptr) = 0;
-  virtual std::vector<int64_t> shape() = 0;
+  EventTimer() {
+    checkRuntime(cudaEventCreate(&begin_));
+    checkRuntime(cudaEventCreate(&end_));
+  }
+
+  virtual ~EventTimer() {
+    checkRuntime(cudaEventDestroy(begin_));
+    checkRuntime(cudaEventDestroy(end_));
+  }
+
+  void start(void *stream) {
+    stream_ = (cudaStream_t)stream;
+    checkRuntime(cudaEventRecord(begin_, (cudaStream_t)stream));
+  }
+
+  float stop(const char *prefix, bool print = true) {
+    float times = 0;
+    checkRuntime(cudaEventRecord(end_, stream_));
+    checkRuntime(cudaEventSynchronize(end_));
+    checkRuntime(cudaEventElapsedTime(&times, begin_, end_));
+    if (print) printf("[Times %s]: %.3f ms\n", prefix, times);
+    return times;
+  }
+
+ private:
+  cudaStream_t stream_ = nullptr;
+  cudaEvent_t begin_ = nullptr, end_ = nullptr;
 };
 
-std::shared_ptr<SCN> create_scn(const SCNParameter& param);
+};  // namespace spconv
 
-};  // namespace lidar
-};  // namespace bevfusion
-
-#endif  // __LIDAR_SCN_HPP__
+#endif  // #ifndef __SPCONV_TIMER_HPP__
