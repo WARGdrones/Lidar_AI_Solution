@@ -91,7 +91,7 @@ install(TARGETS ${PROJECT_NAME} DESTINATION lib EXPORT ${PROJECT_NAME}Config)
 install(FILES src/cuosd.h DESTINATION include)
 
 # install the cmake project, for importing
-# install(EXPORT ${PROJECT_NAME}Config DESTINATION share/${PROJECT_NAME}/cmake)
+install(EXPORT ${PROJECT_NAME}Config DESTINATION share/${PROJECT_NAME}/cmake)
 
 # install the headers
 # install(DIRECTORY ${PROJECT_INCLUDE_DIR}/${PROJECT_NAME} DESTINATION include)
