@@ -88,7 +88,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVE
 install(TARGETS ${PROJECT_NAME} DESTINATION lib EXPORT ${PROJECT_NAME}Config)
 
 # install cusod.h to the include directory
-install(FILES src/cuosd.h DESTINATION include)
+install(FILES src/cuosd.h DESTINATION include/${PROJECT_NAME})
 
 # install the cmake project, for importing
 install(EXPORT ${PROJECT_NAME}Config DESTINATION share/${PROJECT_NAME}/cmake)
